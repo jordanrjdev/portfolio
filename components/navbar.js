@@ -16,14 +16,14 @@ export default function NavbarComponent() {
           <Nav.Item>
             <Nav.Link>
               <Link href="/aboutme">
-                <a className="text-black text-decoration-none">About me</a>
+                <a className="text-black text-decoration-none">Sobre mí</a>
               </Link>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link>
               <Link href="/proyects">
-                <a className="text-black text-decoration-none">Proyects</a>
+                <a className="text-black text-decoration-none">Proyectos</a>
               </Link>
             </Nav.Link>
           </Nav.Item>

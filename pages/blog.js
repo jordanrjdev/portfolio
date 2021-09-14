@@ -9,27 +9,21 @@ export default function Blog({ posts }) {
       <main>
         <Container>
           <Row className="mb-4">
-            <h2 className="my-4">Bienvenido al Blog!!</h2>
+            <h2 className="my-4 fs-2 fw-bold">Bienvenido al Blog!!</h2>
             {posts.map((post) => (
-              <Col sm={12} md={6} lg={3} key={post.slug} className="mb-4">
-                <Card
-                  style={{
-                    minWidth: "17rem",
-                    maxWidth: "18rem",
-                    margin: "0 auto",
-                  }}
+              <Link href={`/${post.slug}`}>
+                <Col
+                  sm={12}
+                  md={11}
+                  key={post.slug}
+                  className="mb-4 border rounded p-3"
+                  style={{ cursor: "pointer" }}
                 >
-                  <Card.Body>
-                    <Card.Title>
-                      <Link href={`/${post.slug}`}>{post.title}</Link>
-                    </Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">
-                      {post.date}
-                    </Card.Subtitle>
-                    <Card.Text>{post.description}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
+                  <a className="text-decoration-none fs-4">{post.title}</a>
+                  <p>{post.date}</p>
+                  <p>{post.description}</p>
+                </Col>
+              </Link>
             ))}
           </Row>
         </Container>
