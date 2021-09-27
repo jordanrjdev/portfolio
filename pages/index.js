@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -19,24 +20,28 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <a href="/proyects" className={styles.card}>
+          <Link href="/proyects">
+          <a  className={styles.card}>
             <h2>Proyectos 🚀 &rarr;</h2>
             <p>
               Te enseñaré los proyectos que he realizado a lo largo de mi
               carrera.
             </p>
           </a>
+          </Link>
 
-          <a href="/aboutme" className={styles.card}>
+          <Link href="/aboutme">
+          <a className={styles.card}>
             <h2>Sobre mí 😀 &rarr;</h2>
             <p>
               Te contaré más de como invierto mi tiempo y lo que me gusta hacer
               en mis tiempos libres!
             </p>
           </a>
+          </Link>
 
+          <Link href="/blog">
           <a
-            href="/blog"
             className={styles.card}
           >
             <h2>Blog 📒 &rarr;</h2>
@@ -45,9 +50,11 @@ export default function Home() {
               mi carrera de desarrollador
             </p>
           </a>
+          </Link>
 
+          <Link href="https://linkedin.com/in/jordanrjdev" target="_blank" 
+          >
           <a
-            href="https://linkedin.com/in/jordandev" target="_blank" 
             className={styles.card}
           >
             <h2>Contáctame 📲 &rarr;</h2>
@@ -56,6 +63,7 @@ export default function Home() {
               trabajar contigo.
             </p>
           </a>
+          </Link>
         </div>
       </main>
     </div>

@@ -2,6 +2,7 @@ import Head from "next/head";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Link from "next/link";
 import { getAllFilesMetadata } from "../lib/mdx";
+import { Fragment } from "react";
 
 export default function Blog({ posts }) {
   return (
@@ -13,12 +14,12 @@ export default function Blog({ posts }) {
         <Container>
           <Row className="mb-4">
             <h2 className="my-4 fs-2 fw-bold">Bienvenido al Blog!!</h2>
-            {posts.map((post) => (
-              <Link href={`/${post.slug}`}>
+            {posts.map((post, index) => (
+              <Fragment key={index}>
+              <Link href={`/${post.slug}`} passHref>
                 <Col
                   sm={12}
                   md={11}
-                  key={post.slug}
                   className="mb-4 border rounded p-3"
                   style={{ cursor: "pointer" }}
                 >
@@ -27,6 +28,7 @@ export default function Blog({ posts }) {
                   <p>{post.description}</p>
                 </Col>
               </Link>
+              </Fragment>
             ))}
           </Row>
         </Container>
