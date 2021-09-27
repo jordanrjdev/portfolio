@@ -19,7 +19,7 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
+          <a href="/proyects" className={styles.card}>
             <h2>Proyectos 🚀 &rarr;</h2>
             <p>
               Te enseñaré los proyectos que he realizado a lo largo de mi
@@ -27,7 +27,7 @@ export default function Home() {
             </p>
           </a>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
+          <a href="/aboutme" className={styles.card}>
             <h2>Sobre mí 😀 &rarr;</h2>
             <p>
               Te contaré más de como invierto mi tiempo y lo que me gusta hacer
@@ -36,7 +36,7 @@ export default function Home() {
           </a>
 
           <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
+            href="/blog"
             className={styles.card}
           >
             <h2>Blog 📒 &rarr;</h2>
@@ -47,7 +47,7 @@ export default function Home() {
           </a>
 
           <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            href="https://linkedin.com/in/jordandev" target="_blank" 
             className={styles.card}
           >
             <h2>Contáctame 📲 &rarr;</h2>

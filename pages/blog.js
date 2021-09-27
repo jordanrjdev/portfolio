@@ -6,6 +6,9 @@ import { getAllFilesMetadata } from "../lib/mdx";
 export default function Blog({ posts }) {
   return (
     <div>
+      <Head>
+        <title>Blog</title>
+      </Head>
       <main>
         <Container>
           <Row className="mb-4">
