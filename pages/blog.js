@@ -16,18 +16,18 @@ export default function Blog({ posts }) {
             <h2 className="my-4 fs-2 fw-bold">Bienvenido al Blog!!</h2>
             {posts.map((post, index) => (
               <Fragment key={index}>
-              <Link href={`/${post.slug}`} passHref>
-                <Col
-                  sm={12}
-                  md={11}
-                  className="mb-4 border rounded p-3"
-                  style={{ cursor: "pointer" }}
-                >
-                  <a className="text-decoration-none fs-4">{post.title}</a>
-                  <p>{post.date}</p>
-                  <p>{post.description}</p>
-                </Col>
-              </Link>
+                <Link href={`/${post.slug}`} passHref>
+                  <Col
+                    sm={12}
+                    md={11}
+                    className="mb-4 border rounded p-3"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <a className="text-decoration-none fs-4">{post.title}</a>
+                    <p>{post.date}</p>
+                    <p>{post.description}</p>
+                  </Col>
+                </Link>
               </Fragment>
             ))}
           </Row>
@@ -39,5 +39,6 @@ export default function Blog({ posts }) {
 
 export async function getStaticProps() {
   const posts = await getAllFilesMetadata();
+  console.log(posts);
   return { props: { posts } };
 }
