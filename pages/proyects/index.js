@@ -26,7 +26,7 @@ export default function Proyects() {
           <Row>
             <div className={styles.grid}>
               {proyects.map((proyect, index) => (
-                <Link href={`/proyects/${proyect.slug}`}>
+                <Link href={`/proyects/${proyect.slug}`} key={index}>
                   <a className={styles.card}>
                     <h2>{proyect.name} </h2>
                     <p
