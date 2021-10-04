@@ -73,8 +73,7 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 800px;
-  margin-top: 3rem;
+  margin: 3rem auto;
 }
 
 .card {

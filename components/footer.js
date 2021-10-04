@@ -1,11 +1,7 @@
 import { Container, Col, Row } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import { FaGithub, FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
 
-import { fab } from '@fortawesome/free-brands-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
-
-library.add(fab)
 export default function Footer() {
   return (
     <footer className="border-top py-4 mt-2">
@@ -17,27 +13,30 @@ export default function Footer() {
               2021.
             </p>
           </Col>
-          <Col className="d-flex justify-content-between" md={4} lg={2}> 
-            <Link className="flex-shrink" href="https://twitter.com/jordanrjdev">
-              <a target="_blank" rel="noreferrer" className="text-black">
-                <FontAwesomeIcon icon={["fab", "twitter"]} />
+          <Col className="d-flex justify-content-between" xs={4} md={4} lg={2}>
+            <Link
+              className="flex-shrink"
+              href="https://twitter.com/jordanrjdev"
+            >
+              <a className="text-black d-block ms-2">
+                <FaTwitter />
               </a>
             </Link>
-            
+
             <Link href="https://instagram.com/vednadroj">
-              <a target="_blank" rel="noreferrer" className="text-black d-block ms-2">
-                <FontAwesomeIcon icon={["fab", "instagram"]}/>
+              <a className="text-black d-block ms-2">
+                <FaInstagram />
               </a>
             </Link>
-            
+
             <Link href="https://www.linkedin.com/in/jordanrjdev/">
-              <a  target="_blank" rel="noreferrer" className="text-black d-block ms-2">
-                <FontAwesomeIcon icon={["fab", "linkedin-in"]} fixedWidth/>
+              <a className="text-black d-block ms-2">
+                <FaLinkedin />
               </a>
             </Link>
             <Link href="https://github.com/jordanrjdev">
-              <a  target="_blank" rel="noreferrer" className="text-black d-block ms-2">
-                <FontAwesomeIcon icon={["fab", "github"]}  />
+              <a className="text-black d-block ms-2">
+                <FaGithub />
               </a>
             </Link>
           </Col>

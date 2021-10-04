@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import Link from "next/link";
 import { getAllFilesMetadata } from "../lib/mdx";
 import { Fragment } from "react";
