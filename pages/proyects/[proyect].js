@@ -25,8 +25,8 @@ export default function Proyect({ proyect }) {
               Ver en github <FaGithub />
             </a>
           </Button>
-          <Button variant="secondary">
-            {proyect.demo ? (
+          {proyect.demo ? (
+            <Button variant="secondary">
               <a
                 className="text-white text-decoration-none"
                 href={proyect.demo}
@@ -35,8 +35,8 @@ export default function Proyect({ proyect }) {
               >
                 Ver demo <FaEye />
               </a>
-            ) : null}
-          </Button>
+            </Button>
+          ) : null}
         </Col>
       </Row>
     </Container>
