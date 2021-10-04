@@ -1,6 +1,6 @@
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { proyects } from "../../proyects";
-import { FaGithub } from "react-icons/fa";
+import { FaEye, FaGithub } from "react-icons/fa";
 
 export default function Proyect({ proyect }) {
   return (
@@ -15,7 +15,7 @@ export default function Proyect({ proyect }) {
               {proyect.technologies.map((tech) => tech).join(", ")}
             </strong>
           </p>
-          <Button variant="primary">
+          <Button variant="primary" className="me-2">
             <a
               className="text-white text-decoration-none"
               href={proyect.repository}
@@ -24,6 +24,18 @@ export default function Proyect({ proyect }) {
             >
               Ver en github <FaGithub />
             </a>
+          </Button>
+          <Button variant="secondary">
+            {proyect.demo ? (
+              <a
+                className="text-white text-decoration-none"
+                href={proyect.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver demo <FaEye />
+              </a>
+            ) : null}
           </Button>
         </Col>
       </Row>
