@@ -5,8 +5,9 @@ export const proyects = [
     description:
       "Aplicación que te permite buscar información acerca de tus peliculas favoritas. Esta aplicacion consume la api de TheMovieDb y la muestra al usuario donde tienes la cantidad de resultados de tu busqueda. Para el desarrollo de esta aplicación fue tomado muy en cuenta el uso de buenas prácticas de desarrollo y permitiendo que esta sea una aplicación facilmente escalable aplicando flujos de trabajo como redux.",
     repository: "https://github.com/jordanrjdev/pelis",
-    demo: "https://pelis.nadrojdev.xyz",
+    demo: "https://pelis.jordanjaramillo.co",
     technologies: ["Reactjs", "Redux", "TypeScript", "Axios"],
+    image: "pelis.png",
   },
   {
     name: "Futvel ⚽",
@@ -22,7 +23,8 @@ export const proyects = [
     description:
       "Este sistema esta siendo desarrollado con el stack de tecnologias MERN para evitar la copia de los alumnos. Este proyecto lo que hace es mostrarte evaluaciones pendientes los cuales son generadas a traves de un admin panel por los maestros y podras elegir que pregunta responder la cual tendras tiempo de 30 segundos para responder. Tambien este sistema detecta cuando alguien se sale de la pestaña actual y te resta 1 punto por cada desonnestidad",
     repository: "https://github.com/jordanrjdev/sistemaevaluacion",
-    demo: "https://sistemaevaluacion.nadrojdev.xyz/",
+    demo: "https://sistemaevaluacion.jordanjaramillo.co/",
+    image: "sistema-evaluacion.png",
     technologies: [
       "Reactjs",
       "Redux",
@@ -38,8 +40,9 @@ export const proyects = [
     description:
       "Este es un template el cual configuré desde 0 react sin el típico comando de create-react-app esto para entender como funsionaba por dentro esta misma herramienta a este proyecto le apliqué varios plugins como la minificacion de archivos, plugins para usar svg y tambien la minificacion de imagenes. Este mismo lo use para desarrollar aplicaciones como el sistema de evaluacion que tambien esta hecho con webpack.",
     repository: "https://github.com/jordanrjdev/-webpack-react-app",
-    demo: "https://webpack.nadrojdev.xyz/",
+    demo: "https://webpack.jordanjaramillo.co/",
     technologies: ["Reactjs", "Webpack"],
+    image: "webpack.png",
   },
   {
     name: "Bot de Telegram 🤖",
@@ -56,6 +59,7 @@ export const proyects = [
       "Este sistema es un proyecto el cual busca ayudar a la fundación Funsiba para fomentar la educación en sus integrantes lo cual es una buena causa y estamos poniendole mucho empeño para que este proyecto pueda estar en producción estas semanas. También hemos estado haciendo que el proyecto sea escalable y tenga buenas practicas de desarrollo tal como en el frontend y en el backend. Incluso los llamados a la base de datos se está haciendo mediante procedimientos almacenados",
     repository: "https://github.com/jordanrjdev/sinbarreras",
     technologies: ["Svelte", "Nodejs", "TypeScript", "MySql", "Docker"],
+    image: "funsiba.png",
   },
   {
     name: "Wiki 🌎",
@@ -86,6 +90,7 @@ export const proyects = [
       "Con esta aplicación participé en la hackathon mas grande de todo el mundo Nasa Space Apps Challenge en el año 2020 y desarrollamos una aplicación la cual te permite registrate como un usuario cualquiera y buscar a mas personas para asi poder crear salas de chats e interactuar entre ustedes todo esto lo logramos a traves de los sockets los cuales queriamos profundizar mucho mas y el resultado final fue presentado a el jurado. Lamentablemente nos faltó transmitir mas el alcance de la aplicación pero esto nos incentivó a seguir mejorando en nuestra carrera a todo el equipo de trabajo",
     repository: "https://github.com/jordanrjdev/Nearest-Space",
     technologies: ["Nodejs", "Reactjs", "MongoDb", "JsonWebTokens"],
+    image: "nearest-space.png",
   },
   {
     name: "Página web de servicios 🙎",
@@ -95,5 +100,6 @@ export const proyects = [
     repository: "https://github.com/jordanrjdev/website",
     demo: "http://peaceful-island-71668.herokuapp.com/",
     technologies: ["Laravel", "Vuejs"],
+    image: "website.png",
   },
 ];
