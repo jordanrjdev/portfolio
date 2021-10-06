@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { proyects } from "../../proyects";
 import { FaEye, FaGithub } from "react-icons/fa";
@@ -6,7 +7,19 @@ export default function Proyect({ proyect }) {
   return (
     <Container>
       <Row className="my-4">
-        <Col>
+        {proyect.image ? (
+          <Col xs={12} lg={6}>
+            <Image
+              src={"/proyects/" + proyect.image}
+              alt={proyect.name}
+              width={500}
+              height={350}
+              layout="responsive"
+              className="mb-3"
+            />
+          </Col>
+        ) : null}
+        <Col xs={12} lg={proyect.image ? 6 : 12}>
           <h1>{proyect.name}</h1>
           <p className="text-justify">{proyect.description}</p>
           <p>
