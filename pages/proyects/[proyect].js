@@ -2,57 +2,60 @@ import Image from "next/image";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { proyects } from "../../proyects";
 import { FaEye, FaGithub } from "react-icons/fa";
+import styles from "../../styles/Home.module.css";
 
 export default function Proyect({ proyect }) {
   return (
-    <Container>
-      <Row className="my-4">
-        {proyect.image ? (
-          <Col xs={12} lg={6}>
-            <Image
-              src={"/proyects/" + proyect.image}
-              alt={proyect.name}
-              width={500}
-              height={350}
-              layout="responsive"
-              className="mb-3"
-            />
-          </Col>
-        ) : null}
-        <Col xs={12} lg={proyect.image ? 6 : 12}>
-          <h1>{proyect.name}</h1>
-          <p className="text-justify">{proyect.description}</p>
-          <p>
-            Tecnologias usadas:{" "}
-            <strong>
-              {proyect.technologies.map((tech) => tech).join(", ")}
-            </strong>
-          </p>
-          <Button variant="primary" className="me-2">
-            <a
-              className="text-white text-decoration-none"
-              href={proyect.repository}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver en github <FaGithub />
-            </a>
-          </Button>
-          {proyect.demo ? (
-            <Button variant="secondary">
+    <main className={styles.container}>
+      <Container>
+        <Row className="my-4">
+          {proyect.image ? (
+            <Col xs={12} lg={6}>
+              <Image
+                src={"/proyects/" + proyect.image}
+                alt={proyect.name}
+                width={500}
+                height={350}
+                layout="responsive"
+                className="mb-3"
+              />
+            </Col>
+          ) : null}
+          <Col xs={12} lg={proyect.image ? 6 : 12}>
+            <h1>{proyect.name}</h1>
+            <p className="text-justify">{proyect.description}</p>
+            <p>
+              Tecnologias usadas:{" "}
+              <strong>
+                {proyect.technologies.map((tech) => tech).join(", ")}
+              </strong>
+            </p>
+            <Button variant="primary" className="me-2">
               <a
                 className="text-white text-decoration-none"
-                href={proyect.demo}
+                href={proyect.repository}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Ver demo <FaEye />
+                Ver en github <FaGithub />
               </a>
             </Button>
-          ) : null}
-        </Col>
-      </Row>
-    </Container>
+            {proyect.demo ? (
+              <Button variant="secondary">
+                <a
+                  className="text-white text-decoration-none"
+                  href={proyect.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver demo <FaEye />
+                </a>
+              </Button>
+            ) : null}
+          </Col>
+        </Row>
+      </Container>
+    </main>
   );
 }
 
