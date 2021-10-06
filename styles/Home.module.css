@@ -116,4 +116,12 @@
     width: 100%;
     flex-direction: column;
   }
+
+}
+@media screen and (max-width:765px){
+  .card {
+    margin: 0;
+    margin-bottom: 1em;
+    width: 100%;
+  }
 }
