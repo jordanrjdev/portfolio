@@ -3,10 +3,11 @@ import { Container, Row, Col } from "react-bootstrap";
 import Link from "next/link";
 import { getAllFilesMetadata } from "../lib/mdx";
 import { Fragment } from "react";
+import styles from "../styles/Home.module.css";
 
 export default function Blog({ posts }) {
   return (
-    <div>
+    <main className={styles.container}>
       <Head>
         <title>Blog</title>
       </Head>
@@ -33,7 +34,7 @@ export default function Blog({ posts }) {
           </Row>
         </Container>
       </main>
-    </div>
+    </main>
   );
 }
 
