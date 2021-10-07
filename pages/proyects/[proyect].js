@@ -3,11 +3,17 @@ import { Col, Container, Row, Button } from "react-bootstrap";
 import { proyects } from "../../proyects";
 import { FaEye, FaGithub } from "react-icons/fa";
 import styles from "../../styles/Home.module.css";
+import ButtonBack from "../../components/buttonBack";
 
 export default function Proyect({ proyect }) {
   return (
     <main className={styles.container}>
       <Container>
+        <Row>
+          <Col>
+            <ButtonBack route="/proyects" />
+          </Col>
+        </Row>
         <Row className="my-4">
           {proyect.image ? (
             <Col xs={12} lg={6}>
