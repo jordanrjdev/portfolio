@@ -1,0 +1,176 @@
+---
+title: "Making a extension for the browser"
+tech: "javascript"
+date: "2022-02-22"
+description: "This is a practical example to create a extension for your browser"
+---
+
+# Making a google chrome extension
+
+Today we are going to see how to make a google chrome extension and that it interacts with the dom of the current page.
+The extension is simple, it will have an input in which you can write a label and when you click the button, these elements that are on the page will be added in a red border.
+
+_The complete code can be found in this [repository](https://github.com/jordanrjdev/Extension-browser)_
+
+## Files
+
+Create the following files in your project folder:
+
+- manifest.json
+- popup.html
+- popup.js
+- background.js
+
+## Manifest.json
+
+Let's start by creating a `manifest.json` file which is the one that will have the details of our extension such as (name, description) including its permissions.
+
+```
+{
+  "name": "Gettin started example",
+  "description": "i build a example for getting started",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
+```
+
+first we are indicating the name description and versions, continuing with the reading we will see the property background > service_worker which is very important since we must register the file that will be executed in the background in this case we have a file that will be called background.js
+
+[Here](https://developer.chrome.com/docs/extensions/mv3/manifest/) you can see more detailed what you can specify in your manifest.
+
+## Background.js
+
+We will create a file called `background.js` to see how it works.
+
+```
+// background.js
+chrome.runtime.onInstalled.addListener(function () {
+  console.log("Hello from background");
+});
+```
+
+Start by including a listener event for runtime.onInstalled in your background script. Inside the onInstalled listener, the extension will show a console message here we can also set persistent variables etc.
+
+## Load the extension in our browser
+
+We are going to go to the extension manager of our browser and we are going to activate the development mode.
+![Activating developer mode in my browser](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645540123/Screen_Shot_2022-02-22_at_09.24.48_xghrib.png)
+
+We are going to click on the button that says load unpacked and we choose the folder that has our files.
+
+![load unpacked button](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645540123/Screen_Shot_2022-02-22_at_09.26.37_iq3mhh.png)
+
+We should see our extension loaded as in the image
+
+![Extension uploaded successfully](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645540123/Screen_Shot_2022-02-22_at_09.27.07_kg13z9.png)
+
+Now we will click on the inspects view where it says service worker, a tab will open and in the console we will be able to see our message `Hello from background`
+
+![Image of our message](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645540124/Screen_Shot_2022-02-22_at_09.28.19_ghhone.png)
+
+Well you already have a background file where you can execute scripts in the background now we will proceed to show a form in our extension.
+
+## Popup.html
+
+As you may have already noticed, we have in our manifest a property called action: default_popup in which we indicate a file called popup.html in which we are going to put an html code with our form:
+
+```
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Tag for change the border</p>
+    <input type="text" id="tagcolor" />
+    <button id="changeColor">Change</button>
+    <script src="popup.js"></script>
+  </body>
+</html>
+```
+
+We have a script which we are going to create called popup.js and that is where we are going to write the logic but let's review the content of our html which has an input and a button with their respective ids to retrieve them with js and be able to do the logic.
+
+## Popup.js
+
+In this file we are going to do several things, the first is to select our button by id
+
+```
+let changeColor = document.getElementById("changeColor");
+```
+
+Now we are going to add a click event to this button and in the asynchronous function we are going to select our input and thus have the value that we write.
+
+```
+changeColor.addEventListener("click", async() => {
+   let inputtag = document.querySelector("#tagcolor");
+   chrome.storage.sync.set({ inputtag: inputtag.value });
+
+   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+   chrome.scripting.executeScript({
+     target: { tabId: tab.id },
+     function: setBorderColor,
+   });
+});
+
+function setBorderColor() {
+   chrome.storage.sync.get("inputtag", ({ inputtag }) => {
+     document.querySelectorAll(inputtag).forEach((element) => {
+       element.style.border = "1px solid red";
+     });
+   });
+}
+```
+
+We will send the value of what we write in our input to our storage.sync to later access it from the setBorderColor function
+
+```
+chrome.storage.sync.set({ inputtag: inputtag.value });
+```
+
+After this we have to select the window in which we are and store it in a variable for this we use destructuring of arrays
+
+```
+let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+```
+
+We will send to execute a script on the screen in which we are with the following code
+
+```
+chrome.scripting.executeScript({
+     target: { tabId: tab.id },
+     function: setBorderColor,
+   });
+```
+
+Within this setBorderColor function, the document to which we will make a selection is already the one from the tab that we indicated, it is no longer our popup.html dom, this must be clear, outside the function, the document was the equivalent to the document of the popup.html of our extension.
+
+Finally, in the setBorderColor function, what we do is obtain the persistent value that we created, which should be the name of a label, id or a class, and as a callback we will execute a querySelectorAll, we will go through the elements and change the style property. border:
+
+```
+function setBorderColor() {
+   chrome.storage.sync.get("inputtag", ({ inputtag }) => {
+     document.querySelectorAll(inputtag).forEach((element) => {
+       element.style.border = "1px solid red";
+     });
+   });
+}
+```
+
+Now we are going to go to any page and we will put the name of a label in this case I will use div
+
+![extension form](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645541590/Screen_Shot_2022-02-22_at_09.52.34_bgvmby.png)
+
+### Results :
+
+![Google](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645541590/Screen_Shot_2022-02-22_at_09.52.45_lsam8h.png)
+![Instagram](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645541761/Screen_Shot_2022-02-22_at_09.55.51_q9uzfd.png)
+
+Here, as you can see, we use various chrome tools such as storage, scripting, and tabs, which is why we define them from the beginning in our manifest.json.
+
+I hope this has really helped you now it's your turn to practice and investigate.
