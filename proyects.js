@@ -1,5 +1,15 @@
 export const proyects = [
   {
+    name: "JMark-Editor",
+    slug: "jmark-editor",
+    description:
+      "Editor online markdown para escribir artículos de manera rápida y sencilla. Los cambios se reflejan en tiempo real en la que escribes, tambien tiene un detector sencillo de cambios en el que te permite guardar los cambios. Esto es almacenado en local storage para que puedas recuperarlos en cualquier momento de manera sencilla y sin necesidad de iniciar sesión.",
+    repository: "https://github.com/jordanrjdev/jmarkeditor",
+    demo: "https://jmarkeditor.jordanjaramillo.co",
+    technologies: ["Reactjs", "TypeScript"],
+    image: "jmarker.png",
+  },
+  {
     name: "Pelis 🎥",
     slug: "pelis",
     description:

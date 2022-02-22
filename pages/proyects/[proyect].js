@@ -30,7 +30,7 @@ export default function Proyect({ proyect }) {
             </a>
           </Link>
           {proyect.demo && (
-            <Link href={proyect.repository}>
+            <Link href={proyect.demo}>
               <a className="w-fit flex justify-center space-x-2 items-center bg-blue-500 text-white px-4 py-3 my-4 rounded">
                 <span>Visitar demo</span> <Web />
               </a>
