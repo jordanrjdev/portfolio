@@ -23,7 +23,6 @@ export const proyects = [
     description:
       "Este sistema esta siendo desarrollado con el stack de tecnologias MERN para evitar la copia de los alumnos. Este proyecto lo que hace es mostrarte evaluaciones pendientes los cuales son generadas a traves de un admin panel por los maestros y podras elegir que pregunta responder la cual tendras tiempo de 30 segundos para responder. Tambien este sistema detecta cuando alguien se sale de la pestaña actual y te resta 1 punto por cada desonnestidad",
     repository: "https://github.com/jordanrjdev/sistemaevaluacion",
-    demo: "https://sistemaevaluacion.jordanjaramillo.co/",
     image: "sistema-evaluacion.png",
     technologies: [
       "Reactjs",

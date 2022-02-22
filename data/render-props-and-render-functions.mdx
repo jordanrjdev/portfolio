@@ -1,0 +1,132 @@
+---
+title: "Render props and render functions in React"
+tech: "react"
+date: "2022-02-18"
+description: "In this example we will know what render props and render functions are in react"
+---
+
+# Render props and Render functions in react.js
+
+## What is Render Props in React
+
+Render props is a pattern in react which helps us to pass the functions as a prop to the components so that we can decide the component rendering logic instead of let component render it’s own logic.
+
+## What is Render Functions
+
+Render functions (or children as functions) can provide even more flexibility and power. If you use popular React components, you've probably stumbled upon the render function technique — React-motion, Apollo-client, and React-router make excellent use of render functions to build flexible and reusable components.
+
+Render functions allow us to encapsulate logic that derives a particular state within a component and exposes that state to our parent component.
+
+Let's look at the following example.
+
+We will create a component that will obtain data from the jsonplaceholder api, this component will have different states such as: "loading, error, empty, and the render of the list of users" then we will use render props and render functions to be able to abstract the rendering logic of our component. Once explained this we can give the code.
+
+First we will create a component called list which will be reusable to render any list thanks to the render props and the render functions
+
+`List/index.js`:
+
+```
+export const List = (props) => {
+  const {
+    loading,
+    onLoading,
+    error,
+    onError,
+    onEmpty,
+    items,
+    children
+  } = props;
+  return (
+    <div>
+      {loading && onLoading()}
+      {error && !loading && onError()}
+      {items.length < 1 && !loading && onEmpty()}
+      {items.length > 0 && !loading && items.map(children)}
+    </div>
+  );
+};
+```
+
+As we can see through the props we will obtain the status of loading, error, the items and the respective functions that help us render components depending on the state as we can see we have the onError function to render a component when there is an error, onLoading when our state is loading and also onEmpty and most importantly we get the children that here is where we will take advantage of the render functions.
+
+Now we will see the App.js which is where we are going to use our List component.
+
+`App.js`
+
+```
+import { useEffect, useState } from "react";
+import { Button } from "./Components/Button";
+import { ButtonGroup } from "./Components/ButtonGroup";
+import { List } from "./Components/List";
+import "./styles.css";
+
+export default function App() {
+  const initialState = {
+    loading: false,
+    list: [],
+    error: false
+  };
+
+  const [state, setState] = useState(initialState);
+
+  const handleStatus = (nameState, valueState) => {
+    setState({ ...initialState, [nameState]: valueState });
+  };
+
+  const getUsers = async () => {
+    try {
+      handleStatus("loading", true);
+      const data = await fetch("https://jsonplaceholder.typicode.com/users");
+      const users = await data.json();
+      handleStatus("list", users);
+    } catch (error) {
+      handleStatus("error", true);
+    }
+  };
+
+  const clearUsers = () => handleStatus("list", []);
+  const onLoading = () => <p>Loading...</p>;
+  const onError = () => <p>There was a error...</p>;
+  const renderItem = (item) => <p key={item.id}>{item.name}</p>;
+  const onEmpty = () => <p>Not items</p>;
+
+  return (
+    <div className="App">
+      <ButtonGroup>
+        <Button onClick={getUsers}>Fetch users</Button>
+        <Button onClick={clearUsers}>Clear users</Button>
+      </ButtonGroup>
+      <List
+        loading={state.loading}
+        error={state.error}
+        onLoading={onLoading}
+        onEmpty={onEmpty}
+        onError={onError}
+        items={state.list}
+      >
+        {renderItem}
+      </List>
+    </div>
+  );
+}
+
+```
+
+As we can see in our app.js we have our functions which we will use as render props.
+
+First we obtain the users with a try catch depending on the result we mutate our status through the handleStatus function.
+
+Then we declare the onLoading function that what it does is render a text that says loading, the same as the onError and onEmpty functions.
+
+In the List component we pass the state and the respective functions. Thus, if we have to change the loading component, we will only have to change the onLoading function, this makes our component descriptive and we can quickly observe what the different states we have are.
+
+Now we will see the render function that helps us to render the items which is the function ` const renderItem = (item) => <p key={item.id}>{item.name}</p>;`
+This function has an item as a parameter and we render the name of this item through a paragraph and use the id as key.
+
+We pass this same function through the children of the component and then in our list we inject it into the map of our items. This is how we use our render functions, in the same way if we want to change the component of each item we can do it in the renderItem function. This is how we abstract all this render logic and can make List a component to render any list. and the components it renders depending on their states are fully customizable.
+
+Now it's a matter of practice and start making our own examples, start making our components descriptive without having to enter the component to see the code since the abstraction is applied.
+
+I leave you the complete example here:
+
+[![Edit Render props and Render functions](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/render-props-and-render-functions-qngcp?fontsize=14&hidenavigation=1&theme=dark)

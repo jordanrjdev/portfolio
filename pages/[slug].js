@@ -1,23 +1,15 @@
 import { MDXRemote } from "next-mdx-remote";
-import { Col, Container, Row } from "react-bootstrap";
-import ButtonBack from "../components/buttonBack";
 import { getFileBySlug, getFiles } from "../lib/mdx";
+import Link from "next/link";
 
 export default function Post({ source, frontmatter }) {
-  console.log(source, frontmatter);
   return (
-    <Container>
-      <Row className="mt-5">
-        <Col>
-          <ButtonBack route="/blog" />
-        </Col>
-      </Row>
-      <Row className="my-4">
-        <Col>
-          <MDXRemote {...source} />
-        </Col>
-      </Row>
-    </Container>
+    <main className="prose max-w-full w-11/12 my-10 md:w-8/12 lg:w-5/12 mx-auto min-h-[calc(100vh_-_96px)] lg:min-h-[calc(100vh_-_96px)]">
+      <Link href="/blog">
+        <a className="text-xl mb-5 inline-block text-blue-700">{"<"} Volver</a>
+      </Link>
+      <MDXRemote {...source} />
+    </main>
   );
 }
 

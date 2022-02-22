@@ -1,41 +1,33 @@
-import { Container, Navbar, Nav } from "react-bootstrap";
 import Link from "next/link";
-export default function NavbarComponent() {
+import { GithubIcon, LinkedinIcon, TwitterIcon } from "./UI/Icons";
+
+export default function Navbar() {
   return (
-    <Navbar expand="lg" className="border-bottom">
-      <Container>
-        <Navbar.Brand>
-          <Link href="/">
-            <a className="text-decoration-none text-white bg-dark p-2 rounded font-weight-bold">
-              JordanDev
-            </a>
-          </Link>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="nav" />
-        <Navbar.Collapse id="nav" className="justify-content-end">
-          <Nav.Item>
-            <Nav.Link>
-              <Link href="/aboutme">
-                <a className="text-black text-decoration-none">Sobre mí</a>
-              </Link>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link>
-              <Link href="/proyects">
-                <a className="text-black text-decoration-none">Proyectos</a>
-              </Link>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link>
-              <Link href="/blog">
-                <a className="text-black text-decoration-none">Blog</a>
-              </Link>
-            </Nav.Link>
-          </Nav.Item>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <nav className="w-11/12 md:w-8/12 lg:w-5/12 py-10 grid grid-cols-2 mx-auto">
+      <div>
+        <Link href="/">
+          <a className="inline-block w-fit font-black text-2xl text-white bg-gray-800 hover:bg-black transition easy-in-out duration-200 p-2 rounded">
+            jordanrjdev
+          </a>
+        </Link>
+      </div>
+      <div className="nav-links flex justify-end items-center space-x-4">
+        <Link href="https://twitter.com/jordanrjdev" rel="noopener noreferrer">
+          <a target="_blank" className="text-gray-600">
+            <TwitterIcon />
+          </a>
+        </Link>
+        <Link href="https://github.com/jordanrjdev" rel="noopener noreferrer">
+          <a target="_blank" className="text-gray-600 hover:text-black">
+            <GithubIcon />
+          </a>
+        </Link>
+        <Link href="https://linkedin/in/jordanrjdev" rel="noopener noreferrer">
+          <a target="_blank" className="text-gray-600">
+            <LinkedinIcon />
+          </a>
+        </Link>
+      </div>
+    </nav>
   );
 }

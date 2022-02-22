@@ -1,66 +1,43 @@
-import Image from "next/image";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import Link from "next/link";
 import { proyects } from "../../proyects";
-import { FaEye, FaGithub } from "react-icons/fa";
-import styles from "../../styles/Home.module.css";
 import ButtonBack from "../../components/buttonBack";
+import { NotImage } from "../../components/UI/Backgrounds";
+import { GithubIcon, Web } from "../../components/UI/Icons";
 
 export default function Proyect({ proyect }) {
   return (
-    <main className={styles.container}>
-      <Container>
-        <Row>
-          <Col>
-            <ButtonBack route="/proyects" />
-          </Col>
-        </Row>
-        <Row className="my-4">
+    <main className="w-11/12 my-10 md:w-8/12 lg:w-5/12 mx-auto min-h-[calc(100vh_-_96px)] lg:min-h-[calc(100vh_-_96px)]">
+      <ButtonBack route="/proyects" />
+      <section id="proyect">
+        <p className="text-2xl text-gray-700 my-10">{proyect.description}</p>
+        <div className={`relative w-${proyect.image ? 3 : 2}/4 mb-10 mx-auto`}>
           {proyect.image ? (
-            <Col xs={12} lg={6}>
-              <Image
-                src={"/proyects/" + proyect.image}
-                alt={proyect.name}
-                width={500}
-                height={350}
-                layout="responsive"
-                className="mb-3"
-              />
-            </Col>
-          ) : null}
-          <Col xs={12} lg={proyect.image ? 6 : 12}>
-            <h1>{proyect.name}</h1>
-            <p className="text-justify">{proyect.description}</p>
-            <p>
-              Tecnologias usadas:{" "}
-              <strong>
-                {proyect.technologies.map((tech) => tech).join(", ")}
-              </strong>
-            </p>
-            <Button variant="primary" className="me-2">
-              <a
-                className="text-white text-decoration-none"
-                href={proyect.repository}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver en github <FaGithub />
+            <img src={"/proyects/" + proyect.image} alt={proyect.name} />
+          ) : (
+            <NotImage />
+          )}
+        </div>
+        <p className="font-semibold text-gray-700 text-xl">
+          Tecnologías usadas :{" "}
+          <span className="font-normal text-blue-700">
+            {proyect.technologies.map((tech) => tech).join(", ")}
+          </span>
+        </p>
+        <div className="flex justify-center w-full my-5 space-x-5 items-center">
+          <Link href={proyect.repository}>
+            <a className="w-fit flex justify-center space-x-2 items-center bg-black text-white px-4 py-3 my-4 rounded">
+              <span>Visitar repositorio</span> <GithubIcon />
+            </a>
+          </Link>
+          {proyect.demo && (
+            <Link href={proyect.repository}>
+              <a className="w-fit flex justify-center space-x-2 items-center bg-blue-500 text-white px-4 py-3 my-4 rounded">
+                <span>Visitar demo</span> <Web />
               </a>
-            </Button>
-            {proyect.demo ? (
-              <Button variant="secondary">
-                <a
-                  className="text-white text-decoration-none"
-                  href={proyect.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Ver demo <FaEye />
-                </a>
-              </Button>
-            ) : null}
-          </Col>
-        </Row>
-      </Container>
+            </Link>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

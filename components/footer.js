@@ -1,47 +1,21 @@
-import { Container, Col, Row } from "react-bootstrap";
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
+import { Dev } from "./UI/Icons";
 
-export default function Footer() {
+export const Footer = () => {
   return (
-    <footer className="border-top py-4 mt-2">
-      <Container>
-        <Row>
-          <Col xs={12} md={8} lg={10} className="d-flex align-items-center">
-            <p className="m-0 p-0">
-              Jordan Ruben Jaramillo Ureña | Todos los derechos reservados ©
-              2021.
-            </p>
-          </Col>
-          <Col className="d-flex justify-content-between" xs={4} md={4} lg={2}>
-            <Link
-              className="flex-shrink"
-              href="https://twitter.com/jordanrjdev"
-            >
-              <a className="text-black d-block ms-2">
-                <FaTwitter />
-              </a>
-            </Link>
-
-            <Link href="https://instagram.com/vednadroj">
-              <a className="text-black d-block ms-2">
-                <FaInstagram />
-              </a>
-            </Link>
-
-            <Link href="https://www.linkedin.com/in/jordanrjdev/">
-              <a className="text-black d-block ms-2">
-                <FaLinkedin />
-              </a>
-            </Link>
-            <Link href="https://github.com/jordanrjdev">
-              <a className="text-black d-block ms-2">
-                <FaGithub />
-              </a>
-            </Link>
-          </Col>
-        </Row>
-      </Container>
+    <footer className="w-full text-center py-10">
+      <p className="text-gray-600">
+        Jordan Ruben Jaramillo Ureña @jordanrjdev • Todos los izquierdos
+        reservados © {new Date().getFullYear()}.
+      </p>
+      <Link href="https://dev.to/jordandev">
+        <a
+          target="_blank"
+          className="flex hover:text-gray-900 justify-center items-center space-x-2 text-gray-600"
+        >
+          <span>Sigueme en</span> <Dev />
+        </a>
+      </Link>
     </footer>
   );
-}
+};

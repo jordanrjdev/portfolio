@@ -1,39 +1,23 @@
-import Head from "next/head";
-import { Container, Row, Col } from "react-bootstrap";
 import Link from "next/link";
+import Post from "../components/post";
 import { getAllFilesMetadata } from "../lib/mdx";
-import { Fragment } from "react";
-import styles from "../styles/Home.module.css";
 
 export default function Blog({ posts }) {
   return (
-    <main className={styles.container}>
-      <Head>
-        <title>Blog</title>
-      </Head>
-      <main>
-        <Container>
-          <Row className="mb-4">
-            <h2 className="my-4 fs-2 fw-bold">Bienvenido al Blog!!</h2>
-            {posts.map((post, index) => (
-              <Fragment key={index}>
-                <Link href={`/${post.slug}`} passHref>
-                  <Col
-                    sm={12}
-                    md={11}
-                    className="mb-4 border rounded p-3"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <a className="text-decoration-none fs-4">{post.title}</a>
-                    <p>{post.date}</p>
-                    <p>{post.description}</p>
-                  </Col>
-                </Link>
-              </Fragment>
-            ))}
-          </Row>
-        </Container>
-      </main>
+    <main className="w-11/12 mt-10 md:w-8/12 lg:w-5/12 mx-auto min-h-[calc(100vh_-_96px)] lg:min-h-[calc(100vh_-_96px)]">
+      <section id="last-blogs" className="mb-20">
+        <Link href="/">
+          <a className="text-xl mb-5 inline-block text-blue-700">
+            {"<"} Volver al inicio{" "}
+          </a>
+        </Link>
+        <h3 className="text-3xl font-bold mb-5">Todos los posts</h3>
+        <div>
+          {posts.map((post, index) => (
+            <Post data={post} key={index} desc={true} />
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

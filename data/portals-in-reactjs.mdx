@@ -1,0 +1,364 @@
+---
+title: "Portals in React"
+tech: "react"
+date: "2020-12-09"
+description: "In this segment we will do a practical example with react portals"
+---
+
+# Portals in React.js
+
+Portals provide a first-class option to render children into a DOM node that exists outside of the parent component's DOM hierarchy, as stated in the official React.js documentation.
+
+Portals are useful when we want to render components but our parent has a hidden overflow or a defined width and height, modals are an ideal example so we are going to build a modal from scratch and apply good user accessibility practices.
+
+You can see the complete code of the example here in this [github repository](https://github.com/jordanrjdev/Portals-example-react)
+
+You can see a demo of the example here:
+
+[![Edit portals-in-react](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/jordanrjdev/Portals-example-react/tree/main/?fontsize=14&hidenavigation=1&theme=dark)
+
+First we are going to create a component which is going to be called `src/Components/Modal/index.js` :
+
+```
+export const Modal = (props) => {
+  let { children, close, ...rest } = props;
+  if (!children) {
+    children = <p>This is a example modal</p>;
+  }
+
+  return (
+      <div id="modal-dialog" {...rest}>
+        <div className="flex flex-col justify-center items-center">
+          {children}
+          <button onClick={close}>
+            Close this modal
+          </button>
+        </div>
+      </div>
+  );
+};
+
+```
+
+In the `src/styles.css` file we will have the following code:
+
+```
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap");
+* {
+  font-size: 62.5%;
+  font-family: "Roboto";
+  margin: 0;
+  padding: 0;
+}
+
+#App {
+  overflow: hidden;
+  height: 20vh;
+  background-color: #ccc;
+}
+
+#App > h1 {
+  font-size: 2rem;
+}
+
+div#modal-dialog {
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  z-index: 999;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div#modal-dialog > div {
+  background-color: #f5f5f5;
+  padding: 2rem;
+  border-radius: 1.2rem;
+}
+
+p {
+  margin: 1.4rem 0;
+  font-size: 1.5rem;
+}
+
+button {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: none;
+  background-color: #9b59b6;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #8e44ad;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+```
+
+Here we are going to have several styles for our modal and we have also defined some standard classes for our application.
+
+Now in the modal we will receive several _props_ such as children, close (function to close the modal) and the rest of the props that we may have, we also have a fixed element that is the button to close the modal and there we will pass the function of close on click event.
+
+We will go on to create a div in our index.html file which will be the sibling element of the parent div of our application and the file would be as follows:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+    <div id="modals"></div>
+  </body>
+</html>
+
+```
+
+To this div we will put the id of "modals" which is in which the modal component will be injected thanks to the portals.
+
+This benefits us so that our component is not affected by the styles of our parent that has overflow hidden and height and width defined since it would not be displayed correctly.
+
+Now we will go on to create the `src/App.js`:
+
+```
+import { useState } from "react";
+import ReactDOM from "react-dom";
+import { Modal } from "./Components/Modal";
+import "./styles.css";
+
+const domElement = document.getElementById("modals");
+
+export default function App() {
+  const [stateModal, setStateModal] = useState(false);
+  const openModal = () => setStateModal(true);
+  const closeModal = () => setStateModal(false);
+
+  return (
+    <div id="App" className="flex flex-col justify-center items-center">
+      <h1>Portals Example</h1>
+      <div className="flex flex-col items-center justify-center">
+        <p>This is a div with a defined height and overflow hidden</p>
+        <button onClick={openModal}>
+          Open modal
+        </button>
+      </div>
+      {stateModal &&
+        ReactDOM.createPortal(
+          <Modal close={closeModal}>
+            <p>Modal from App.js</p>
+          </Modal>,
+          domElement
+        )}
+    </div>
+  );
+}
+```
+
+First we have the imports and on line 6 we have a reference to the div#modal getting it with
+
+```
+const domElement = document.getElementById("modals"); //Reference to div#modals for create portal
+```
+
+We need to have this stored in a variable since we will need it to create the portal.
+
+Then we have the state of openModal to be able to know if the modal is open or closed, we also have the respective functions to open and close the modal.
+
+We have the button to open the modal, below this we have the most important thing which is a conditional that when the modal's state is `true` we will use the ReactDOM createPortal function and as the first parameter we will pass the element that we want to render and how second parameter we will pass the reference of the div where we are going to inject said component so we have something like this:
+
+```
+{stateModal &&
+  ReactDOM.createPortal(
+  <Modal close={closeModal}>
+      <p>Modal from App.js</p>
+  </Mode>,
+  domElement
+)}
+```
+
+Having this we will be able to see how the modal will be rendering inside the div#modals that is outside the parent container of our app, all this thanks to the portals and thus we had no problems with our styles or even having the modal elements separated from the dom.
+
+![Imagen del dom renderizando la modal](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1645422557/Screen_Shot_2022-02-21_at_00.48.40_lnenm8.png)
+
+## Improving our accessibility with good practices
+
+> Note:
+> When working with portals, remember that managing keyboard focus is very important. For dialogs, make sure everyone can interact with them by following the [WAI-ARIA Modal Creation Practices](https://www.w3.org/TR/wai-aria-practices-1.1/#dialog_modal) .
+
+### Programmatically managing the focus.
+
+Our React apps continually modify the HTML DOM at runtime, sometimes causing keyboard focus to be lost or set to an unexpected element. To fix this, we need to programmatically push the keyboard focus in the correct direction. For example, resetting keyboard focus to a button that opened a modal window after that modal window is closed.
+
+Then we are going to improve our components so that there are no errors.
+
+What would happen if for some reason you have a modal to delete something and when the modal is opened the focus is sent to the confirm button, this is bad accessibility management because it can be activated inadvertently by keyboard input so it is It is always better to leave the focus on the action of closing the modal and return it to the button that activated the modal so that it does not get lost in some non-existent element of it.
+
+For this we must block the scroll and also prevent the focus from leaving our component, we will use 2 dependencies which we are going to install through:
+
+```
+npm i no-scroll focus-trap-react
+```
+
+We are going to improve our modal component by redirecting the focus to the cancel button and we will do this thanks to React's useRef hook.
+
+`src/Components/Modal/index.js`:
+
+```
+import noScroll from "no-scroll";
+import { useEffect, useRef } from "react";
+import FocusTrap from "focus-trap-react";
+export const Modal = (props) => {
+  let { children, openButtonRef, close, ...rest } = props;
+  if (!children) {
+    children = <p>This is a example modal</p>;
+  }
+
+  let buttonRef = useRef();
+
+  useEffect(() => {
+    buttonRef ? buttonRef.current.focus() : null;
+    noScroll.on();
+    return () => {
+      openButtonRef ? openButtonRef.current.focus() : null;
+      noScroll.off();
+    };
+  }, []);
+
+  return (
+    <FocusTrap>
+      <div id="modal-dialog" {...rest}>
+        <div className="flex flex-col justify-center items-center">
+          {children}
+          <button ref={buttonRef} onClick={close}>
+            Close this modal
+          </button>
+        </div>
+      </div>
+    </FocusTrap>
+  );
+};
+
+```
+
+First we do the imports of our new dependencies:
+
+```
+import FocusTrap from "focus-trap-react";
+import noScroll from "no-scroll";
+```
+
+Then we create a reference that we will use in our button `let buttonRef = useRef();`
+and we make the reference as follows with our close button modal `<button ref={buttonRef} onClick={close}>Close this modal</button>`
+
+We will also add a new property that is the reference of our button to open our modal in order to return the focus when this modal is closed: `let { children, openButtonRef, close, ...rest } = props;`
+
+With useRef we will know when this modal is rendered, which will indicate that it is open, we will verify that there are references to the close button, if there is a reference, we will focus it with `openButtonRef ? openButtonRef.current.focus() : null;` and we will also block the scroll to our application with ```noScroll.off()````
+and most importantly when this component is unmounted we are going to give focus back to the button that opened the modal and we will unlock the scroll again with the following code
+
+```
+openButtonRef ? openButtonRef.current.focus() : null;
+noScroll.off();
+```
+
+For which the useEffect would be as follows:
+
+```
+   useEffect(() => {
+     buttonRef ? buttonRef.current.focus() : null;
+     noScroll.on();
+     return() => {
+       openButtonRef ? openButtonRef.current.focus() : null;
+       noScroll.off();
+     };
+   }, []);
+```
+
+Finally we will wrap our modal with the component:
+
+```
+<FocusTrap>
+{......}
+</FocusTrap>
+```
+
+In our `src/App.js` component we are going to create a reference to our open button and pass it to our modal so our file would look like this:
+
+```
+import { useRef, useState } from "react";
+import ReactDOM from "react-dom";
+import { Modal } from "./Components/Modal";
+import "./styles.css";
+
+const domElement = document.getElementById("modals");
+
+export default function App() {
+  const [stateModal, setStateModal] = useState(false);
+
+  let openButtonRef = useRef();
+
+  const openModal = () => setStateModal(true);
+  const closeModal = () => setStateModal(false);
+
+  return (
+    <div id="App" className="flex flex-col justify-center items-center">
+      <h1>Portals Example</h1>
+      <div className="flex flex-col items-center justify-center">
+        <p>This is a div with a defined height and overflow hidden</p>
+        <button ref={openButtonRef} onClick={openModal}>
+          open modal
+        </button>
+      </div>
+      {stateModal &&
+        ReactDOM.createPortal(
+          <Modal close={closeModal} openButtonRef={openButtonRef}>
+            <p>Modal from App.js</p>
+          </Mode>,
+          domElement
+        )}
+    </div>
+  );
+}
+```
+
+In this way we have applied good accessibility practices, the scroll will be blocked and also the focus will only be limited to our modal we can test using the "Tab" button, in this example we have learned about react portals and to create a modal with good practices.
+
+Now all that remains is to practice and continue investigating what we can improve on this modal component.
+
+Tell me, in what other example would you use react portals?

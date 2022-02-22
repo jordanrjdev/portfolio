@@ -1,0 +1,186 @@
+---
+title: "Custom hook para validacion de campos con React"
+tech: "react"
+date: "2022-01-20"
+description: "En este post crearemos un custom hook para la validacion de campos en React.js"
+---
+
+# Custom hook para validación de campos en React.js
+
+Vamos a crear un proyecto desde cero en react donde crearemos nuestro custom hook.
+
+Aqui el codigo original :
+[![Edit Custom Hook fields](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/custom-hook-fields-grjj6?fontsize=14&hidenavigation=1&theme=dark)
+
+En nuestro archivo `app.js` vamos a tener el siguiente codigo.
+
+```
+import "./styles.css";
+export default function App() {
+  const submit = () => {
+    console.log("sending")
+  };
+
+  return (
+    <div className="App">
+      <h1>Custom hook</h1>
+      <div>
+        <input
+          type="text"
+          name="name"
+          id="name"
+        />
+      </div>
+      <button onClick={submit}>Enviar</button>
+    </div>
+  );
+}
+
+```
+
+Es momento de crear nuestro custom hook por lo que crearemos una carpeta con nuestro archivo `hooks/useFields.js` y aqui empezaremos con la lógica inicialmente tendremos lo siguiente.
+
+```
+import { useState } from "react";
+
+export default function useFormFields(initialState) {
+  const [fields, setValues] = useState(initialState);
+  const [errors, setErrors] = useState({});
+
+  return [
+    fields,
+    function (event) {
+      setValues({
+        ...fields,
+        [event.target.id]: event.target.value
+      });
+    },
+    errors
+  ];
+}
+```
+
+Aqui tenemos un estado normal el cual tendrá como valor inicial lo que le pasamos a nuestro custom hooks por medio de parámetros (campos del formulario) luego tenemos un estado vacio para nuestros errores y hacemos el return de los valores:
+
+- valor de los campos
+- funcion para actualizar los valores de los campos
+- errores
+
+Ahora para usar nuestro custom hook podemos actualizar nuestro `app.js` a esto :
+
+```
+import "./styles.css";
+import useFields from "./hooks/useFields";
+export default function App() {
+  const [fields, handleFieldChange, errors] = useFields({
+    name: ""
+  });
+  const submit = () => {
+    console.log(fields)
+  };
+
+  return (
+    <div className="App">
+      <h1>Custom hook</h1>
+      <div>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value={fields.name}
+          onChange={handleFieldChange}
+        />
+      </div>
+      <button onClick={submit}>Send</button>
+    </div>
+  );
+}
+
+```
+
+Aqui ya estamos haciendo el primer uso de nuestro custom hook pero aun no tenemos los errores para esto vamos a crear la funcion para obtenerlos, en nuestro `hooks/useFields.js` vamos a actualizarlo:
+
+```
+import { useState } from "react";
+
+export default function useFormFields(initialState) {
+  const [fields, setValues] = useState(initialState);
+  const [errors, setErrors] = useState({});
+
+  const getErrors = () => {
+    Object.keys(fields).forEach((field) => {
+      if (!fields[field].trim()) {
+        setErrors({ ...errors, [field]: `The ${field} is required` });
+      } else {
+        let newErrors = { ...errors };
+        delete newErrors[field];
+        setErrors({ ...newErrors });
+      }
+    });
+  };
+
+  return [
+    fields,
+    function (event) {
+      setValues({
+        ...fields,
+        [event.target.id]: event.target.value
+      });
+    },
+    getErrors,
+    errors
+  ];
+}
+
+```
+
+Ahora hemos añadido la funcion de getErrors que lo que hace es recorrer cada llave de nuestro estado de campos para saber si el valor esta vacio (aqui podemos añadir otras validaciones por tipo de input y tipo de valor) entonces ahora la exportamos solo queda usarla en nuestro `app.js` y es lo que haremos a continuacion en nuestro archivo `app.js` :
+
+```
+import "./styles.css";
+import useFields from "./hooks/useFields";
+export default function App() {
+  const [fields, handleFieldChange, getErrors, errors] = useFields({
+    name: ""
+  });
+  const submit = () => {
+    getErrors();
+  };
+
+  return (
+    <div className="App">
+      <h1>Custom hook</h1>
+      <div>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value={fields.name}
+          onChange={handleFieldChange}
+        />
+        <br />
+        {errors?.name && <small>{errors.name}</small>}
+      </div>
+      <button onClick={submit}>Send</button>
+    </div>
+  );
+}
+
+```
+
+De esta manera ya tenemos un custom hooks. Podrías ampliarlos mas aplicando reglas de validacion y validando en la funcion getErrors los distintos tipos de campos del formulario ahora solo tienes que practicar!.
+
+Recordemos que el destructuring que agregamos a nuestro custom hook debe ser igual al return de otro caso nos arrojará un error o no funcionará correctamente.
+
+Espero que esto te sirva para que puedas crear tus propios custom hooks. Si tienes alguna duda dejala en los comentarios haré lo posible por ayudarlos. <3
+
+### Sobre mí
+
+<p>
+  <em>
+    Software developer at{" "}
+    <a href="https://www.justmediagroup.com/">Just Media Group</a>
+  </em>
+</p>
+
+[![Twitter: jordanrjdev](https://img.shields.io/twitter/follow/jordanrjdev?style=social)](https://twitter.com/jordanrjdev)[![Linkedin: jordanrjdev](https://img.shields.io/badge/-jordanrjdev-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/jordanrjdev/)](https://www.linkedin.com/in/jordanrjdev/)[![GitHub Jordan](https://img.shields.io/github/followers/jordanrjdev?label=follow&style=social)](https://github.com/jordanrjdev)

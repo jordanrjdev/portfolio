@@ -1,0 +1,137 @@
+---
+title: "Cancelar peticiones con axios"
+tech: "react"
+date: "2022-01-24"
+description: "En este post veremos como cancelar las peticiones http con axios en un ejemplo practico."
+---
+
+# Cancelar peticiones con axios (ejemplo práctico con React.js)
+
+En el día a día como desarrolladores trabajaremos mucho con peticiones http en nuestro frontend, por eso es importante saber optimizar estas peticiones ya que si no lo hacemos podremos ocasionar perdida de memoria y esto afectará de manera negativa la experiencia del usuario.
+
+Vamos a ver un ejemplo practico para cancelar estas peticiones, para esto vamos a poner un ejemplo de uso.
+
+```
+const getPhotos = async () => {
+    try {
+      onSetLoading(true);
+      let rs = await getDataApi(
+        "https://jsonplaceholder.typicode.com/photos"
+      );
+      setList(rs.data);
+      onSetLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+useEffect(() => {
+    getPhotos();
+  }, []);
+
+```
+
+Imagina que un usuario quiere obtener cierta data de nuestra aplicación y accede a la pantalla que llama a esta data, pero por alguna razón el usuario vuelve al menú o simplemente le da atrás en el navegador antes de que la petición se resuelva pues si vemos este caso mas detallado veremos que la petición que hicimos no se cancela automáticamente como podemos ver en el ejemplo no estamos limpiando nuestro componente por lo que veremos como hacerlo.
+
+## Función para obtener data
+
+Crearemos una función global para hacer nuestras peticiones tipo get
+
+```
+import axios from "axios";
+
+export const getDataApi = async (url, cancelToken = null) => {
+  if (!url || !url.trim()) throw new Error("The endpoint is required");
+  return axios.get(url, cancelToken && { cancelToken: cancelToken.token });
+};
+```
+
+Como ya pudiste observar tenemos la función `getDataApi` esta recibe la url y un cancel token que puede ser enviado como no y realica su respectiva validacion antes de enviarlo a la configuración de la petición. Podemos hacer que sea obligatorio para asi no olvidar de que debe estar allí (sería una buena practica hacerlo).
+
+```
+export const Photos = (props) => {
+  const [list, setList] = useState([]);
+  const { loading, onSetLoading, onLoading, onBack } = props;
+
+  const getPhotos = async (source = null) => {
+    try {
+      onSetLoading(true);
+      let rs = await getDataApi(
+        "https://jsonplaceholder.typicode.com/photos",
+        source
+      );
+      setList(rs.data);
+      onSetLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+```
+
+# Función que se encargará de realizar la petición a la api
+
+Ahora vamos a crear una función que se encargue de llamar a nuestra api
+
+```
+export const Photos = (props) => {
+  const [list, setList] = useState([]);
+  const { loading, onSetLoading, onLoading, onBack } = props;
+
+  const getPhotos = async (source = null) => {
+    try {
+      onSetLoading(true);
+      let rs = await getDataApi(
+        "https://jsonplaceholder.typicode.com/photos",
+        source
+      );
+      setList(rs.data);
+      onSetLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+```
+
+Como puedes ver esta recibe como parametro un source el cual puede ser obviado y este se lo enviamos como segundo parametro a la función `getDataApi`
+
+Ahora que tenemos esto claro veremos como llamariamos esta función en nuestra primera carga del componente.
+
+```
+ useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    getPhotos(source);
+    return () => {
+      source.cancel("Canceled");
+    };
+  }, []);
+```
+
+En este useEffect tenemos la creación de nuestro cancel token y se lo enviamos a la funcion `getPhotos` para tener la referencia de cual es la peticion que se va a cancelar.
+
+Al limpiar nuestro componente podemos hacer un source.cancel y enviar un mensaje personalizado para manejo de errores etc.
+
+No necesitas crear un cancel token para varias peticiones veamos un ejemplo:
+
+```
+useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    getPhotos(source);
+    getDateUser(source);
+    getMusics(source);
+    return () => {
+      source.cancel("Canceled");
+    };
+  }, []);
+```
+
+En este caso podemos ver que al limpiar nuestro componente se cancelarán todas las peticiones que esten pendientes.
+Tambien podemos hacer una limpieza de nuestro estado.
+
+De esta manera ya sabemos como cancelar nuestras peticiones y reducir la posibilidad de tener memory leak en nuestra aplicación.
+
+Ahora para probar nuestro ejemplo te dejo el código completo, te recomiendo que el ejemplo lo pruebes en una pestaña en blanco y en la opción de network del navegador selecciones el preset de slow 3G para que así puedas ver como la petición se cancela.
+
+Ejemplo completo :
+[![Edit Cancelling http requests (forked)](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/cancelling-http-requests-forked-kzs27s?fontsize=14&hidenavigation=1&theme=dark)

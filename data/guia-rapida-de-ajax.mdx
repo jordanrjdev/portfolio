@@ -1,0 +1,223 @@
+---
+title: "Guía rápida de ajax"
+tech: "javascript"
+date: "2020-12-09"
+description: "Te dejaré una guía para que puedas prácticar y conocer como trabaja ajax"
+---
+
+# Guía rápida de Ajax
+
+¿Qué es AJAX y cómo funciona?
+AJAX significa JavaScript asíncrono y XML (Asynchronous JavaScript and XML). Es un conjunto de técnicas de desarrollo web que permiten que las aplicaciones web funcionen de forma asíncrona, procesando cualquier solicitud al servidor en segundo plano es decir que la pagina o sitio web realice una peticion al servidor y la muestre sin tener que refrescarse.
+
+JavaScript tiene la funcionalidad de gestionar el contenido dinámico de un sitio web y permite la interacción dinámica del usuario. XML es otra variante de un lenguaje de marcado como HTML, como lo sugiere su nombre: eXtensible Markup Language. Mientras HTML está diseñado para mostrar datos, XML está diseñado para contener y transportar datos.
+
+JavaScript y XML funcionan de forma asíncrona en AJAX.
+
+Ahora veremos unos ejemplos de como realizar una peticion AJAX.
+
+Incluso veremos unos ejemplos para trabajar con un servidor hecho en php.
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/oqb0tode41w587v2jk96.jpg)
+
+Antes de hacer una peticion ajax hay que verificar si el navegador es compatible
+
+Ejemplo leyendo datos desde un txt
+
+mensaje.txt:
+
+```
+Mensaje usando ajx
+```
+
+index.js:
+
+```
+function ejecutarAjax(){
+  let ajaxRequest;
+  if(window.XMLHttpRequest){
+    ajaxRequest = new XMLHttpRequest();
+  }else {
+    ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP")
+  }
+
+  //ajaxRequest.readyState = 0 peticion no inicializada
+  //ajaxRequest.readyState = 1 peticion ha sido establecida
+  //ajaxRequest.readyState = 2 peticion ha sido enviada
+  //ajaxRequest.readyState = 3 peticion esta siendo procesada
+  //ajaxRequest.readyState = 4 peticion ha sido finalizada
+  //ajaxRequest.status = codigos de verbo http
+
+  ajaxRequest.onreadystatechange = function (){
+    if(ajaxRequest.readyState == 4 && ajaxRequest.status == 200 ){
+      console.log(ajaxRequest.responseText)
+    }
+  }
+
+  ajaxRequest.open("GET", "mensaje.txt", true) //verbo http - direccion del servidor al que se hara la peticion - boolean este indica si sera asincrono o no
+  ajaxRequest.send()
+}
+```
+
+Ahora leeremos los datos desde un json
+
+mensaje.json:
+
+```
+{
+  "msg": "HELLO WORLD SINCE AJAXXXX !!!"
+}
+
+```
+
+index.js:
+
+```
+function ejecutarAjaxJson() {
+  let xml;
+
+  if (window.XMLHttpRequest) {
+    xml = new XMLHttpRequest();
+  } else {
+    xml = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  xml.onreadystatechange = function () {
+    if (xml.readyState == 4 && xml.status == 200) {
+      data = JSON.parse(xml.responseText);
+      console.log(data);
+    }
+  };
+
+  xml.open("GET", "mensaje.json", true);
+  xml.send();
+}
+```
+
+Para hacer una peticion a un servidor de php debemos de hacer la siguiente peticion ajax:
+
+index.html :
+
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post ajax y php</title>
+  </head>
+  <body>
+    <input id="nombre" type="text" placeholder="su nombre" />
+    <input id="pais" type="text" placeholder="su pais" />
+    <button id="btn">Enviar</button>
+
+    <div id="response"></div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
+
+```
+
+index.js:
+
+```
+const enviarInfo = () => {
+  let nombre = document.getElementById("nombre").value;
+  let pais = document.getElementById("pais").value;
+  let xml = new XMLHttpRequest();
+  let info = `nombre=${nombre}&pais=${pais}`;
+  xml.onreadystatechange = function () {
+    if (xml.readyState == 4 && xml.status == 200) {
+      console.log(xml.responseText);
+      document.getElementById("response").innerText = "";
+      document.getElementById("response").innerText = xml.responseText;
+    }
+  };
+
+  xml.open("POST", "server.php", true);
+  xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xml.send(info);
+};
+
+document.getElementById("btn").addEventListener("click", enviarInfo);
+
+```
+
+En el servidor de php tendremos el siguiente codigo:
+
+```
+<?php
+  $nombre = $_POST["nombre"];
+  $pais = $_POST["pais"];
+
+  if (empty($nombre) || empty($pais)) {
+    echo "error";
+  }else {
+    echo "{$nombre} bienvenido que tal todo en {$pais}";
+  }
+?>
+```
+
+Este codigo anterior usamos el verbo POST ahora veremos como hacer una peticion a un servidor de php usando el verbo GET.
+
+index.html:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post ajax y php</title>
+  </head>
+  <body>
+    <input id="num1" type="number" placeholder="numero 1" />
+    <input id="num2" type="number" placeholder="numero 2" />
+    <button id="btn">Enviar</button>
+    <div id="res"></div>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+index.js:
+
+```
+const enviarInfoGet = () => {
+  let num1 = document.getElementById("num1").value;
+  let num2 = document.getElementById("num2").value;
+  let cadena = `num1=${num1}&num2=${num2}`;
+  let xml = new XMLHttpRequest();
+  xml.onreadystatechange = function () {
+    if (xml.readyState == 4 && xml.status == 200) {
+      console.log(xml.responseText);
+      document.getElementById("res").innerText = "";
+      document.getElementById("res").innerText = xml.responseText;
+    }
+  };
+  xml.open("GET", "server.php?" + cadena, true);
+  xml.send();
+};
+
+document.getElementById("btn").addEventListener("click", enviarInfoGet);
+
+```
+
+server.php:
+
+```
+<?php
+  $num1 = $_GET["num1"];
+  $num2 = $_GET["num2"];
+
+  if(is_numeric($num1) && is_numeric($num2)){
+    echo $num1 + $num2;
+  }
+  else {
+    echo "Ingresa solo numeros";
+  }
+?>
+```
+
+De esta manera podrás realizar peticiones y mostrar los resultados sin tener que refrescar la pagina esto sera de gran beneficio ya que los usuarios quedaran mas satisfechos con los resultados lo cual sin duda generara mucho mas tráfico en tu sitio web.
