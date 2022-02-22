@@ -5,7 +5,7 @@ export const Footer = () => {
   return (
     <footer className="w-full text-center py-10">
       <p className="text-gray-600">
-        Jordan Ruben Jaramillo Ureña @jordanrjdev • Todos los izquierdos
+        Jordan Ruben Jaramillo Ureña @jordanrjdev • Todos los derechos
         reservados © {new Date().getFullYear()}.
       </p>
       <Link href="https://dev.to/jordandev">
