@@ -22,7 +22,10 @@ export default function Navbar() {
             <GithubIcon />
           </a>
         </Link>
-        <Link href="https://linkedin/in/jordanrjdev" rel="noopener noreferrer">
+        <Link
+          href="https://linkedin.com/in/jordanrjdev"
+          rel="noopener noreferrer"
+        >
           <a target="_blank" className="text-gray-600">
             <LinkedinIcon />
           </a>
