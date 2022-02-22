@@ -37,7 +37,7 @@ export default function Home({ posts }) {
                     <Dev width="40px" height="40px" />
                   </a>
                 </Link>
-                <Link href="https://medium.com/@jordandev">
+                <Link href="https://medium.com/@jordanrjdev">
                   <a
                     target="_blank"
                     className="flex hover:text-gray-900 justify-center items-center space-x-2 text-gray-600"
