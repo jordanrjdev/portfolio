@@ -18,14 +18,20 @@ export default function Home({ posts }) {
 
       <main className="w-11/12 my-10 md:w-8/12 lg:w-5/12 mx-auto min-h-[calc(100vh_-_96px)] lg:min-h-[calc(100vh_-_96px)]">
         <section id="profile" className="mb-5">
-          <div className="flex items-center space-x-24 justify-between">
-            <div>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-9">
               <h1 className="text-5xl font-bold mb-2">
                 Jordan Jaramillo Ureña
               </h1>
-              <p className="text-xl text-gray-700">
+              <p className="text-xl text-gray-700 mb-4">
                 Software Developer | React.js | Vue.js | Node.js | Ruby on Rails
                 | Laravel
+              </p>
+              <p className="text-xl">
+                I am passionate about technology, I discovered programming when
+                I was 15 years old, so I specialized in web development and
+                currently my favorite technologies are ReactJS, NodeJS and
+                Laravel
               </p>
               <span className="mt-5 block">Follow me:</span>
               <div className="flex justify-start items-center space-x-5">
@@ -47,7 +53,7 @@ export default function Home({ posts }) {
                 </Link>
               </div>
             </div>
-            <div>
+            <div className="col-span-3">
               <Image
                 src="/profile.jpeg"
                 alt="profile"

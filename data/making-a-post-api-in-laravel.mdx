@@ -1,0 +1,633 @@
+---
+title: Making a Post API in Laravels
+tech: "laravel"
+date: "2022-04-12"
+description: In this practical example we will make a post api in laravel applying good practices
+---
+
+# Making a Post API in Laravel
+
+Making an api using laravel is very simple and makes it much easier for us to develop, it also helps you understand and apply good programming practices.
+
+So in this example we are going to make an api on posts, which we are going to have with authentication and in the end you are going to have a challenge which I will explain to you later as we advance with the project!
+
+## Starting with the project
+
+To create a project with Laravel from scratch we will start by going to the console and write the following command:
+
+```
+composer create-project --prefer-dist laravel/laravel apiposts
+```
+
+Now we have a project created we are going to connect it to our database we do this in our .env file:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=apipost
+DB_USERNAME=root
+DB_PASSWORD=root
+```
+
+Ready we have our database connected now we are going to create the models we need, in Laravel we have the migrations that are the versions of our database. This has many benefits when we develop as a team since we will be able to know what changes were made in the base and in case of errors we can roll back to a previous version.
+
+Laravel already brings default migrations that we can alter to our liking, in our case we will create a new one as follows:
+
+```
+php artisan make:migration create_posts_table
+```
+
+Now we have our migration but some more things are missing like controller, model, seeders, factory, request that will help us with our project.
+We can create them one by one with the artisan commands but Laravel allows us to automate this and create everything with a single command, we are going to delete the migration of posts that we have created.
+
+And let's run the command:
+
+```
+php artisan make:model Post --all
+```
+
+This command will create Model, factory, seeder, requests, controller and policy.
+
+We'll use them in a moment, but first we'll go to the database/migrations folder and open the last migration that was done and we'll see something like this:
+
+```
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('posts');
+    }
+};
+```
+
+Inside the up function we are going to define our table fields, the fields that we will use for now will be id, title, content, deleted_at and the timestamps that are created_at and updated_at by default.
+
+So our function would look like this:
+
+```
+public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('content');
+            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+        });
+    }
+```
+
+Ready now we have our migration ready, now for this to be reflected in our database we have to run a command, remember that the database you configured must already be created, but without any table.
+
+run migrations:
+
+```
+php artisan migrate
+```
+
+> As you can see all our tables have names in the plural and our model in the singular due to the convention used by Laravel, I recommend that all the models and tables have names in English to follow the convention.
+
+![Tables of apipost database](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647625080/Screen_Shot_2022-03-18_at_12.36.02_dc43sj.png)
+
+The next thing we are going to do is fill our post table with fake data to be able to develop the list method and not do inserts in our database since it is tedious, for this we can use the Laravel factories so, we have already created our factory thanks to the command we used above but don't worry you can create others with the command `php aritsan make:factory NameFactory`
+
+In our databases/factories/PostFactory file we have a method called definition inside the return we can do the following:
+
+```
+public function definition()
+     {
+         return [
+             'title' => $this->faker->sentence,
+             'content' => $this->faker->paragraph,
+             'deleted_at' => null,
+         ];
+     }
+```
+
+What this will do is use faker to be able to fill our table with fake data but now we have to call it and use this we use it in the database/seeders/DatabaseSeeders file:
+
+```
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        \App\Models\Post::factory(120)->create();
+    }
+}
+
+```
+
+As you can see we use the Post model and we say that it creates 120 records with the factory method if you use another version of Laravel the syntax may change but you can see it in the official documentation.
+
+You may wonder what the seeders are for, the seeders are where you can insert data into your database using eloquent methods, which is the orm that Laravel has configured by default. The factories are the ones that help us generate some records with fake data in a massive way, passing only a certain number of records, as you already realized, a query builder is not used, it is only enough to indicate the fields and the value they will have.
+
+That is why the factories are called within the database seeder, the other seeders also have to be called within the database seeder since this is the only one that is executed when we call them using the command:
+
+```
+php artisan db:seed // Seeders are executed and records will be inserted into our table
+```
+
+![data of the posts table](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647626339/Screen_Shot_2022-03-18_at_12.58.29_bfhyls.png)
+
+Now we know what migrations, seeders and factories are for, now we will start creating our api routes and methods.
+
+In the routes folder we have several files, as you can see we have web.php, api.php, channels and console.
+
+We will concentrate on just the web and api, where web is for web routes and api is the one we are going to use in this tutorial.
+
+in the api.php file we have a defined route which is the following:
+
+```
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+     return $request->user();
+});
+```
+
+We are going to delete this and we are going to create a route as follows:
+
+```
+Route::get('/hello', function () {
+    return 'Hello World';
+});
+```
+
+As we can see, we prepend the Route class with its method, which is the verb that we will have in this route as the second parameter, we can use a callback and return a text.
+
+Now we will test this in postman:
+
+To start the development server we can execute the command:
+
+```
+php artisan serve
+```
+
+![call api from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647626831/Screen_Shot_2022-03-18_at_13.06.46_wdq1cg.png)
+
+Done but now we must start creating our routes for our api, we will use versioning for our api since this way we will use a good practice and our api can grow without affecting other projects that use it.
+
+We will create the routes, Laravel allows us to create routes together with a single line which we will do as follows:
+
+```
+Route::resource('v1/posts', PostController::class)->only(['index']);
+```
+
+We use resource to create several routes, but since we will only use the index method for now, we will tell it through the only function that we only want that route and so we can add the ones we need.
+
+You will also notice that we add v1 to the endpoint of our resources, this is to be able to mutate our api quickly and safely without other apps that use it breaking in the future, for example, if we want to change the way the data is displayed or we want to remove fields from our api we would create a resource with v2 and thus we can better control how our api has changed over time
+
+Now something very important we are going to create the controller of our posts, we already have a controller but we are not going to use it, we are going to create another controller with the command:
+
+```
+  php artisan make:controller Api/V1/PostController --api
+```
+
+Ready now we have our api Controllers and versioned these are located in the app/Http/Controllers/Api folder and here we can create the v2, v3 folder as needed.
+
+When we created our controller we told it to be of type api with the --api flag so we will only have 5 methods unlike normal api controllers which have 7 methods.
+
+Now we need to change the controller that we reference our route to in the api.php file:
+
+```
+<?php
+
+use App\Http\Controllers\Api\V1\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::resource('v1/posts', PostController::class)->only(['index']);
+```
+
+With doing this we have it ready now we will start creating our main endpoint
+
+Let's see what routes we have in our laravel and what controller method is executed when we call them.
+
+We see this with the command:
+
+```
+php artisan route:list
+```
+
+![Routes](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647627648/Screen_Shot_2022-03-18_at_13.20.35_j2p63k.png)
+
+As we can see we have a few default routes but the one that interests us is the one in position 5 as you can see it is called /api/v1/posts and as you can see it has this "Api\V1\PostController@index" this means that when we call this route will execute the index method so that is where we are going to write the logic to respond to the client.
+
+We are going to make a call to our database and we are going to make the records come ordered and paginated, then we will return it as a response of type json.
+
+The method would be something like this:
+
+```
+  public function index()
+     {
+         $posts = Post::latest()->paginate();
+         return response()->json($posts);
+     }
+```
+
+In this way we return the posts as json to the client so, now we will see how the data arrives from the postman:
+
+![call api from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647628003/Screen_Shot_2022-03-18_at_13.26.07_bvixmo.png)
+
+Ready we already have the response in a paginated way now we are going to work on our second endpoint which is the show method to show a single post according to the id of the parameters, for this we must in our api.php add another method apart from the index that this would be the show and we will change our resource method to apiResource this so that it does not create more unnecessary routes since the resource has 7 routes, this one only has 5
+
+```
+Route::apiResource('v1/posts', PostController::class)->only(['index', 'show']);
+```
+
+Now if we list our routes we will see a new one that is:
+
+```
+  GET|HEAD api/v1/posts/{post} ........................................... ............................................ posts.show › Api\ V1\PostController@show
+```
+
+As we can see, this retains a {post}, this refers to the fact that we must pass the id of our post to be able to show the info.
+
+So let's go to the controller to modify the show method:
+
+```
+ public function show($id)
+    {
+        //
+    }
+```
+
+First we have to look for the post in our database and then return it as a response.
+
+We have a parameter which is the id that the user puts in the url, and thanks to eloquent and the simplicity of laravel we can do the following:
+
+```
+public function show(Post $post)
+    {
+        return response()->json($post);
+    }
+```
+
+Adding the Model as the type of the variable, Laravel understands this and gives you the record to which the model belongs.
+
+Now let's see in postman:
+
+![call method show from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647629836/Screen_Shot_2022-03-18_at_13.56.50_j4maj5.png)
+
+That easy we already have the show method of our api.
+
+Now we will see the delete method. The same process we add the method to our resource in api.php and go to the destroy method in our controller.
+
+```
+Route::apiResource('v1/posts', PostController::class)->only(['index', 'show', 'destroy']);
+```
+
+PostController :
+
+```
+ public function destroy($id)
+    {
+
+    }
+```
+
+Here we can do the same as in the show make Laravel bring us the record automatically:
+
+``` 
+ public function destroy(Post $post)
+    {
+        $post->deleted_at = now();
+        $post->save();
+        return response()->json(['message' => 'Post deleted'], Response::HTTP_NO_CONTENT);
+    }
+```
+
+As you can see we only reassign the value of the deleted_at field with the now() function and the logical deletion is done, we do not delete it from the database. We return null and as a second parameter we pass a no content code which is 204 we can send it as a number but I prefer to use Response you can see the rest of the code in the official Laravel doc.
+
+Let's see this in the postman:
+
+![call method destroy from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647630433/Screen_Shot_2022-03-18_at_14.06.56_njmjvq.png)
+
+Now we will add that in our index method only the posts that are not deleted are seen, so we will add a condition:
+
+```
+  public function index()
+     {
+         $posts = Post::where('deleted_at', null)->latest()->paginate();
+         return response()->json($posts);
+     }
+```
+
+In this way this method is solved and the deleted posts will no longer be shown.
+
+Now we will add that in our show method we do not want the ifno of a deleted post to be seen, so we will add an if:
+
+```
+public function show(Post $post)
+     {
+         if ($post->deleted_at) {
+             return response()->json(['message' => 'Post have been deleted'], Response::HTTP_NOT_FOUND);
+         } else {
+             return response()->json($post);
+         }
+     }
+```
+
+We already have solved this other method that easy.
+
+But what happens if we do the following:
+
+![error in found posts](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647632059/Screen_Shot_2022-03-18_at_14.33.42_yudz1v.png)
+
+As you can see we have an html error which is not right, so how do we fix this?
+
+Whenever we consume an api in Laravel we must pass the property in the headers
+
+```
+Accept : application/json
+```
+
+With this, Laravel already knows that it should send us the error in json, so now we will obtain the following response:
+
+![error not found in json](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647632238/Screen_Shot_2022-03-18_at_14.37.08_jo3rdx.png)
+
+We have a problem which is that I don't want to show this error in this way to the users so we will change the show function in this way:
+
+```
+public function show($id)
+     {
+         try {
+             $post = Post::where('deleted_at', null)->findOrFail($id);
+             return response()->json($post);
+         } catch (ModelNotFoundException $e) {
+             return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+         }
+     }
+```
+
+As you can see, we are now using the findOrFail method, this will throw us a ModelNotFoundException type exception and we will return the message with a not found code.
+
+In this way we obtain a shorter message and we do not detail the user so much for security reasons.
+
+```
+{
+    "message": "No query results for model [App\\Models\\Post] 1" // Post deleted
+}
+```
+
+Now we can do the same in the destroy method.
+
+```
+public function destroy($id)
+    {
+        try {
+            $post = Post::where('deleted_at', null)->findOrFail($id);
+            $post->deleted_at = now();
+            $post->save();
+            return response()->json(null, Response::HTTP_NO_CONTENT);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+    }
+```
+
+We are almost done, now we are going to format our responses, since we are now returning the model and this is not done in Laravel in this way. We'll do it using resources and collections.
+The resources help us to format our model and thus return the collections, they are exactly the same but it is to return collections, we see it in practice. Now we will create a resource as follows.
+
+```
+php artisan make:resource V1/PostResource
+```
+
+Here we will also apply versioning since we can mutate these resources as our api grows.
+
+Now we go to the file app/Http/Resources/V1/PostResource:
+
+```
+<?php
+
+namespace App\Http\Resources\V1;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->body,
+            'created_at' => $this->created_at,
+        ];
+    }
+}
+```
+
+We make a return and assign keys and what field we want to be assigned I will leave it this way and now we are going to use it in our PostController:
+
+```
+public function show($id)
+     {
+         try {
+             $post = Post::where('deleted_at', null)->findOrFail($id);
+             return new PostResource($post);
+         } catch (ModelNotFoundException $e) {
+             return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+         }
+     }
+```
+
+Here we return a new instance of the post resource remember that we can only pass one record to our resource, for several records we are going to create a collection but for this I will use a version 2 of my api and we will understand the advantages of this practice.
+
+First we will create the routes resource in api.php :
+
+```
+<?php
+
+use App\Http\Controllers\Api\V1\PostController as PostControllerV1;
+use App\Http\Controllers\Api\V2\PostController as PostControllerV2;
+use Illuminate\Support\Facades\Route;
+
+Route::apiResource('v1/posts', PostControllerV1::class)->only(['index', 'show', 'destroy']);
+Route::apiResource('v2/posts', PostControllerV2::class)->only(['index']);
+```
+
+As you can see, I create the route only with the index method and I create another controller in the V2 folder of controllers and I assign an alias to it to avoid conflict in the imports, now we create the controller:
+
+```
+php artisan make:controller Api/V2/PostController --api
+```
+
+Now we are going to do the index method just like in the PostController version 1.
+
+```
+// V2/PostController
+public function index()
+    {
+        $posts = Post::where('deleted_at', null)->latest()->paginate();
+        return response()->json($posts);
+    }
+```
+
+Ready we have it let's see the postman:
+
+![call v2 api method index from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647633616/Screen_Shot_2022-03-18_at_15.00.00_sf47gn.png)
+
+As you can see it is exactly the same but now in version 2 I only want to send the id and the title so for this we are going to create the collection that will help us give this a structure:
+
+```
+php artisan make:resource V2/PostCollection
+```
+
+Now we go to the File app/Http/Resources/V2/PostCollection
+
+and we would have to do something like this:
+
+```
+public function toArray($request)
+    {
+        return [
+            'data' => $this->collection,
+            'target' => [
+                'organization' => 'com.jordan',
+                'author' => [
+                    'name' => 'Jordan',
+                    'email' => 'jordan@mail.com',
+                ],
+            ],
+            'type' => 'post',
+        ];
+
+    }
+```
+
+As you can see, we add more information and within the data property I want it to return all the data of the collection. We use this in V2/PostController:
+
+```
+// V2/PostController
+public function index()
+    {
+        $posts = Post::where('deleted_at', null)->latest()->paginate();
+        return new PostCollection($posts);
+    }
+```
+
+![call v2/api method index from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647633949/Screen_Shot_2022-03-18_at_15.05.39_fqkt8y.png)
+
+![call v2/api method index from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647633964/Screen_Shot_2022-03-18_at_15.05.57_tmw3ea.png)
+
+But we have a problem, although our structure has changed, all the post fields are still displayed. To solve this, we create a v2 resource and we will use it in our collection:
+
+```
+php artisan make:resource V2/PostResource
+```
+
+And we modify it:
+
+```
+<?php
+
+namespace App\Http\Resources\V2;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+        ];
+    }
+}
+```
+
+Now we have to tell our collection to use this resource:
+
+```
+<?php
+
+namespace App\Http\Resources\V2;
+
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class PostCollection extends ResourceCollection
+{
+
+    public $collects = PostResource::class;
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'data' => $this->collection,
+            'target' => [
+                'organization' => 'com.jordan',
+                'author' => [
+                    'name' => 'Jordan',
+                    'email' => 'jordan@mail.com',
+                ],
+            ],
+            'type' => 'post',
+        ];
+
+    }
+}
+```
+
+In this way we solve our problem.
+
+![call v2/posts method index from postman](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1647634485/Screen_Shot_2022-03-18_at_15.14.29_oeeupo.png)
+
+So the applications that consume our old api will not have problems or will fall.
+
+In this way we have made an api with a few methods applying good programming practices as recommended by the laravel documentation. The challenge is that you finish the update and store methods of the api as well as the other methods of version 2.
+
+If something is not clear to you, you can comment and I will help you with pleasure.
+
+You can find the complete code in the following [github repository](https://github.com/jordanrjdev/apiposts)
