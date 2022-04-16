@@ -28,12 +28,12 @@ export default function Home({ posts }) {
                 | Laravel
               </p>
               <p className="text-xl">
-                I am passionate about technology, I discovered programming when
-                I was 15 years old, so I specialized in web development and
-                currently my favorite technologies are ReactJS, NodeJS and
-                Laravel
+                Soy un apasionado de la tecnología, descubrí la programación
+                cuando tenía 15 años, por lo que me especialicé en desarrollo
+                web y actualmente mis tecnologías favoritas son ReactJS, NodeJS
+                y Laravel
               </p>
-              <span className="mt-5 block">Follow me:</span>
+              <span className="mt-5 block">Sigueme :</span>
               <div className="flex justify-start items-center space-x-5">
                 <Link href="https://dev.to/jordandev">
                   <a
@@ -92,6 +92,6 @@ export default function Home({ posts }) {
 }
 
 export async function getStaticProps() {
-  const posts = await getAllFilesMetadata(5);
+  let posts = await getAllFilesMetadata(5);
   return { props: { posts } };
 }

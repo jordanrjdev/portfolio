@@ -1,0 +1,98 @@
+---
+title: "How to use async/await with .map in js"
+tech: "javascript"
+date: "2022-04-15"
+description: "In this example we will see how to use async/await with .map in javascript"
+---
+
+# How to use async/await with .map in js
+
+At some point you may have wondered how to use asynchronous functions in methods like .map or .forEach, because in this little blog you will see what the most common errors are and how to solve them.
+
+You can see the complete code in this codesandbox repository
+
+[![Edit How to use async/await with .map in js](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/how-to-use-async-await-with-map-in-js-8tplrx?fontsize=14&hidenavigation=1&theme=dark)
+
+For this we will have the following base code in the index.ts file:
+
+```
+const usernames: string[] = ["jordanrjdev", "anonymous123", "channelyy"];
+
+const simulateFetchData = (username: string): Promise<string> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(`${username} is a valid username`);
+    }, 1000);
+  });
+}
+```
+
+As you can see we have an array of usernames and a function that takes a parameter and returns a string.
+
+Now we will iterate the array of usernames to obtain the simulated data of each user with the map method:
+
+```
+const dataUsers = usernames.map(async (username) => {
+   return await simulateFetchData(username);
+});
+console.log(dataUsers);
+```
+
+But when executing this we will see in the console the following result:
+
+```
+[ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+```
+
+So to solve it we have 2 options, which are to use **Promise.all** or use a **for of**
+
+## For of
+
+We are going to use a for of to be able to solve this error that is very common and can make us lose a lot of time when trying to find the most appropriate solution.
+
+```
+const getWithForOf = async() => {
+   console.time("for of");
+   const data = []
+   for (const username of usernames) {
+     let dataUser = await simulateFetchData(username);
+     data.push(dataUser);
+   }
+   console.timeEnd("for of");
+}
+getWithForOf();
+```
+
+With this option the code will be executed sequentially, so you can wait for each call. This will help us get each iteration resolved before moving on to the next.
+
+Keep in mind that if we do an N number of iterations and each of these takes 1 second to resolve, as in our example, it means that it will take a total of 3 seconds to finish executing this portion of code. We can see this in the console output thanks to console.time :
+
+```
+for of: 3,012s
+```
+
+## Promise.all
+
+Now we will use the promise.all method to solve our problem, so we will have the following code:
+
+```
+const getWithPromiseAll = async() => {
+   console.time("promise all");
+   let data = await Promise.all(usernames.map(async (username) => {
+     return await simulateFetchData(username);
+   }))
+   console.timeEnd("promise all");
+}
+
+getWithPromiseAll();
+```
+
+As you can see we have a Promise.all method which receives an array of promises, remember that the ` usernames.map(async (username) => {return await simulateFetchData(username);})` returns an array of promises, just what we need so we pass it to Promise.all to resolve them.
+
+This method will cause all asynchronous code to be resolved in parallel.
+
+So if we have a number N of asynchronous functions, they will be executed and resolved without waiting between them, which can come in handy in some specific case.
+
+> Sometimes for performance reasons we will need to execute our promises in parallel with Promise.all and other times we will need to do it in sequence with the for of loop. **The important thing is that you understand the difference between each one** and how to adapt it to your needs.
+
+If you have any questions or suggestions do not forget to comment, see you soon :)
