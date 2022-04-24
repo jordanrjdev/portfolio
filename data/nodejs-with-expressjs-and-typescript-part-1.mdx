@@ -1,0 +1,269 @@
+---
+title: "NodeJS with ExpressJS and TypeScript part 1."
+tech: "nodejs"
+date: "2022-04-18"
+description: In this post we will see how to create a server with expressJS and typescript from scratch, this post will be divided into several parts to make it understandable and explain each thing thoroughly.
+---
+
+# NodeJS with ExpressJS and TypeScript part 1.
+
+In this post we will see how to create a server with expressJS and typescript from scratch, this post will be divided into several parts to make it understandable and explain each thing thoroughly.
+
+#### You can access the code from the [repository](https://github.com/jordanrjdev/express-typescript)
+
+## Getting started
+
+The first step to start a project in nodeJS we go with this command:
+
+```
+npm init -y
+```
+
+This command will start our project by creating the file **package.json**.
+
+Now we have to install the dependencies, for this case I am going to use express with typescript, let's see which are the dependencies that we are going to install:
+
+Dependencies:
+
+- express
+
+Dev Dependencies:
+
+- typescript
+- ts-node
+- @types/node
+- @types/express
+
+Why do we install everything related to Typescript as devDependencies? Okay, let's remember that even though we'll be writing the code using Typescript, the code is recompiled into standard JavaScript. So Typescript is not needed per se to run the app, we only need it while we are developing this is why it is saved as a development dependency.
+
+So let's run the following command:
+
+````
+npm init express
+``` 
+
+and :
+
+````
+
+npm init -D typescript ts-node @types/node @types/express
+
+```
+
+Once we have successfully installed all the dependencies our package.json should look something like this:
+
+```
+
+{
+"name": "nodejs",
+"version": "1.0.0",
+"description": "",
+"main": "index.js",
+"scripts": {
+"test": "echo \"Error: no test specified\" && exit 1"
+},
+"keywords": [],
+"author": "",
+"license": "ISC",
+"dependencies": {
+"express": "^4.17.3"
+},
+"devDependencies": {
+"@types/express": "^4.17.13",
+"@types/node": "^17.0.25",
+"ts-node": "^10.7.0",
+"typescript": "^4.6.3"
+}
+}
+
+```
+
+> Remember that the versions can change depending on when you read this post.
+
+## Configure TypeScript
+
+```
+
+npx tsc --init
+
+```
+
+The tsconfig.json file that we created with the previous command contains a lot of code, and much of this same code is commented out so that you can experiment and configure it to your liking. However, there are a few settings I want to explain:
+
+
+- **module**: with this option, you can specify which module manager to use in the generated JavaScript code. such as : 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020' or 'ESNext'. The most common and default module manager is commonjs.
+
+- **target**: using this option, we can specify which version of ECMAScript to use in your project. Available versions are 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020' or 'ESNEXT'.
+
+- **outDir**: with this option, we can specify in which route the Javascript code will be generated.
+
+- **rootDir**: this option is where we specify where the TypeScript files are located.
+
+- **strict**: The option is enabled by default and enables strict type checking options.
+
+You can read more about this configuration in the tsconfig.json file itself or also from the official typescript documentation.
+
+In my case I will use the following configuration in tsconfig.json:
+
+```
+
+{
+"compilerOptions": {
+"module": "commonjs",
+"esModuleInterop": true,
+"target": "es6",
+"rootDir": "src/",
+"outDir": "./build",
+"strict": true
+}
+}
+
+```
+
+## Our first server with expressJS
+
+With typescript set up, it's time to create our first web server with expressJS. Let's create a file called index.ts.
+
+In this file we will have the following code:
+
+```
+
+import express, { Request, Response } from "express";
+const app = express();
+
+app.get('/', (req: Request, res: Response) => {
+res.send('Hello World');
+});
+
+app.listen(8000, () => {
+console.log('The application is listening on port 8000!');
+});
+
+```
+
+First what we do is import express from express along with the Request and Response types.
+
+Once this is done we have to initialize our app with the line
+
+```
+
+const app = express();
+
+```
+
+Now we are going to add a get type endpoint in which a message will be returned, so we have to do the following:
+
+```
+
+app.get("/");
+
+```
+
+To start in a simple way we will have our app and then we will put the method of our endpoint in this case **get** this is a function which receives 2 parameters to start, then we can add middleware to it but at the moment there are 2 which the first it is a string with the route as we want it to be our initial route we just have to put a / and express understands that this will be our main route.
+
+Now we have to add the second parameter which is a callback, this callback receives 2 parameters which is request and response :
+```
+
+app.get('/', (req: Request, res: Response) => {
+});
+
+```
+As you can see, I have already added the types. Remember that you give the name to the 2 parameters, but by convention and the most common that you will find are req and res.
+
+Inside this callback our code will go, which will be executed when we access the route for now we will respond only text:
+
+```
+
+app.get('/', (req: Request, res: Response) => {
+res.send('Hello World');
+});
+
+```
+
+With **res.send('Hello World');** what we do is tell it to respond with text to our call.
+
+Now let's see this in the browser. But before doing so we need one thing, which is to tell our express server (app) to keep listening on a certain port.
+
+So we will write:
+
+```
+
+app.listen(8000, () => {
+console.log('The application is listening on port 8000!');
+});
+
+```
+
+This receives 2 parameters, the first the port where our server will be listening and a callback which will be executed when the server is ready, for now we will only put a console.log.
+
+
+Taking this into account we are going to execute our server.
+
+Remember that since we are working with typescript we must compile to js so that node can read it, we execute the command:
+
+```
+
+npx tsc --project ./
+
+```
+
+A build folder will be generated. which will have our code. which we may not understand but is already compiled.
+
+To speed up the compilation of our code we can create a script in our package.json in the scripts section:
+
+```
+
+"scripts": {
+"build": "npx tsc --project ./",
+"test": "echo \"Error: no test specified\" && exit 1"
+},
+
+```
+
+I have called it build now to compile we just have to execute:
+
+```
+
+npm run build
+
+```
+
+Whenever we create a script we have to execute it with:
+
+```
+
+npm + run + script name
+
+```
+
+At this point we can write the command:
+
+```
+
+node ./build/index.js
+
+```
+
+We will see the following output:
+
+```
+
+❯ node ./build/index.js
+The application is listening on port 8000!
+
+```
+
+Let's look at our web browser:
+
+![web browser](https://res.cloudinary.com/dwhdaxdf6/image/upload/v1650335533/Screen_Shot_2022-04-18_at_21.31.18_b6l6r0.png)
+
+As we can see we have the response from our endpoint.
+
+As you could see in this article we have created our first server with expressJS and typescript.
+
+In the next part we will see how to speed up development using nodemon and we will also see how to respond to different types of formats. Requests with other http verbs and more.
+
+If you have any questions about this post, you can leave it in the comments. Or also if you have any recommendation you could leave it anyway.
+
+**The next part of this post will be available on April 19.**
+```

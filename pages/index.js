@@ -93,5 +93,6 @@ export default function Home({ posts }) {
 
 export async function getStaticProps() {
   let posts = await getAllFilesMetadata(5);
+  console.log(posts);
   return { props: { posts } };
 }

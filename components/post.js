@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Post({ data, desc }) {
   return (
     <div className="flex flex justify-start space-x-5 items-center my-9">
-      <div className="bg-gray-800">
+      <div className="bg-gray-900">
         <Icon icon={data.tech} />
       </div>
       <div>
